@@ -1,0 +1,173 @@
+<ion-header class="ion-no-border main-header">
+  <ion-toolbar class="header-toolbar">
+    <div class="header-container">
+
+      <!-- Brand Logo Section -->
+      <div class="brand-section">
+        <div class="brand-logo">
+          <!-- Replace with your SVG/Image logo -->
+          <img src="../../assets/icon/favicon.svg" alt="Capitec Bank Logo" srcset="">
+        </div>
+      </div>
+
+      <!-- Segment Toggle Switcher (Personal / Business) -->
+      <div class="segment-wrapper">
+        <ion-segment value="personal" class="capitec-segment">
+          <ion-segment-button value="personal">
+            <ion-label>Personal</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="business">
+            <ion-label>Business</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <!-- Search Input Bar -->
+      <div class="search-wrapper">
+        <div class="search-pill">
+          <ion-icon name="search-outline" class="search-icon"></ion-icon>
+          <input type="text" placeholder="Find ways to bank better" class="search-input" />
+        </div>
+      </div>
+
+      <!-- Right Actions Bar -->
+      <div class="actions-wrapper">
+
+        <!-- Sign In Button -->
+        <button class="action-btn text-btn">
+          <ion-icon name="key-outline" class="btn-icon"></ion-icon>
+          <span>Sign in</span>
+        </button>
+
+        <!-- Get the App Button (Outlined) -->
+        <button class="action-btn outline-btn">
+          Get the app
+        </button>
+
+        <!-- Switch Action (Solid Call-to-Action) -->
+        <button class="action-btn solid-btn">
+          Switch to Capitec
+        </button>
+
+        <!-- Menu Toggle Button -->
+        <ion-button fill="clear" class="menu-btn">
+          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+        </ion-button>
+
+      </div>
+
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="content-container">
+
+    <section class="branch-locator-section">
+      <div class="locator-container">
+        <ion-grid class="ion-no-padding">
+          <ion-row class="ion-align-items-stretch">
+
+            <!-- LEFT COLUMN (Size: 4) -->
+            <ion-col size="12" size-lg="4" class="left-panel-col">
+              <div class="left-panel">
+                <div class="header-block">
+                  <h1 class="section-title">Branches</h1>
+                  <p class="section-description">
+                    Explore Capitec branches and ATM locations across South Africa using MapLibre GL vector maps.
+                  </p>
+                </div>
+
+                <div class="search-block">
+                  <h2 class="search-title">Find a branch near you</h2>
+                  
+                  <div class="search-input-wrapper">
+                    <!-- Bind input to filter query and trigger filtering on change/input -->
+                    <input 
+                      type="text" 
+                      [(ngModel)]="searchQuery" 
+                      (input)="filterBranches()" 
+                      placeholder="Enter suburb, city or name..." 
+                      class="search-input"
+                    />
+                    <ion-icon name="search-outline" class="search-icon"></ion-icon>
+                  </div>
+                
+                  <button class="location-btn" (click)="useMyCurrentLocation()">
+                    <ion-icon name="navigate-outline" class="btn-icon"></ion-icon>
+                    <span>Use my location</span>
+                  </button>
+                </div>
+              </div>
+            </ion-col>
+
+            <!-- RIGHT COLUMN (Size: 8) - MapLibre Component -->
+            <ion-col size="12" size-lg="8" class="right-map-col">
+              <div class="map-wrapper">
+
+                <mgl-map 
+                  [mapStyle]="mapStyle" 
+                  [center]="center" 
+                  [zoom]="zoom">
+                  
+                  <!-- Map Markers -->
+                  <mgl-marker 
+                    *ngFor="let branch of branches"
+                    [lngLat]="branch.lngLat">
+                    <div class="custom-map-pin" (click)="selectBranch(branch)"></div>
+                  </mgl-marker>
+
+                </mgl-map>
+
+                <!-- Zoom Controls -->
+                <div class="map-zoom-controls">
+                  <button class="zoom-btn" (click)="zoomIn()" aria-label="Zoom in">+</button>
+                  <button class="zoom-btn" (click)="zoomOut()" aria-label="Zoom out">−</button>
+                </div>
+
+                <!-- Selected Branch Overlay Card -->
+                <div class="branch-card-overlay" *ngIf="selectedBranch">
+                  <div class="card-header">
+                    <div>
+                      <h3 class="branch-name">{{ selectedBranch.name }}</h3>
+                      <span class="distance-badge">{{ (selectedBranch.distance / 1000).toFixed(1) }}km away</span>
+                    </div>
+                    <button class="close-btn" (click)="selectedBranch = null" aria-label="Close details">
+                      <ion-icon name="close-outline"></ion-icon>
+                    </button>
+                  </div>
+
+                  <div class="status-badge-container">
+                    <span class="status-badge" [ngClass]="selectedBranch.trading_status === 'Open' ? 'open' : 'closed'">
+                      <span class="dot"></span> {{ selectedBranch.operating_hours.operating_time_string }}
+                    </span>
+                  </div>
+
+                  <p class="branch-address">{{ selectedBranch.address }}</p>
+
+                  <div class="amenities-row">
+                    <span class="amenity" *ngFor="let attr of selectedBranch.attributes">
+                      <ion-icon name="cash-outline"></ion-icon>
+                      {{ attr.value | uppercase }} ON-SITE
+                    </span>
+                  </div>
+
+                  <a [href]="selectedBranch.googleDirectionsLink" target="_blank" rel="noopener noreferrer"
+                    class="directions-btn-link">
+                    <button class="directions-btn">
+                      <ion-icon name="paper-plane-outline" class="btn-icon"></ion-icon>
+                      <span>Get Directions</span>
+                    </button>
+                  </a>
+                </div>
+
+              </div>
+            </ion-col>
+
+          </ion-row>
+        </ion-grid>
+      </div>
+    </section>
+
+  </div>
+</ion-content>

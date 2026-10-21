@@ -1,0 +1,7 @@
+{
+  "name": "branch-locator",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
