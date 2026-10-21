@@ -77,7 +77,7 @@ docker run -d -p 8100:8100 --name branch-locator-app capitec-branch-locator
 Open your browser and navigate to:
 
 ```
-http://localhost:8100
+http://localhost:8100 or http://172.17.0.2:8100/
 ```
 
 ## 🤖 AI Workflow & Architecture Credits
